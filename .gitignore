@@ -1,0 +1,12 @@
+# Local database credentials
+db.php
+
+# Temporary database testing
+test-db.php
+
+# Uploaded personal clothing images
+uploads/*
+!uploads/.gitkeep
+
+# Mac system files
+.DS_Store
