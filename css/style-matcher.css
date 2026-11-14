@@ -1,98 +1,44 @@
 /* ============================================
-   StyleSphere · Style Matcher
+   StyleSphere · Style Matcher + My Looks
+   Loads AFTER css/style.css (Riyanshi's global stylesheet).
+
+   Merge rules, so neither design breaks the other:
+   - every rule here lives under .sm-page (the <main> of the matcher and
+     My Looks pages), so the shared header and footer are never touched
+   - my CSS variables are --sm-* (her :root variables are left alone)
+   - class names that also exist in style.css were renamed with an sm- prefix:
+     .chip .chips .eyebrow .lead .polaroid .matcher .filter-chips
    ============================================ */
 
-:root {
-    --cream: #f6efe6;
-    --cream-deep: #efe5d8;
-    --paper: #fbf7f1;
-    --ink: #2b1d1a;
-    --ink-soft: #5b4a45;
-    --wine: #6b2737;
-    --wine-dark: #521c29;
-    --line: rgba(107, 39, 55, 0.14);
+.sm-page {
+    --sm-cream: #f6efe6;
+    --sm-cream-deep: #efe5d8;
+    --sm-paper: #fbf7f1;
+    --sm-ink: #2b1d1a;
+    --sm-ink-soft: #5b4a45;
+    --sm-wine: #6b2737;
+    --sm-wine-dark: #521c29;
+    --sm-line: rgba(107, 39, 55, 0.14);
 
-    --serif: "Cormorant Garamond", Georgia, serif;
-    --sans: "Jost", system-ui, sans-serif;
-    --script: "Pinyon Script", cursive;
-}
+    --sm-serif: "Cormorant Garamond", Georgia, serif;
+    --sm-sans: "Jost", system-ui, sans-serif;
+    --sm-script: "Pinyon Script", cursive;
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-    font-family: var(--sans);
-    color: var(--ink);
+    font-family: var(--sm-sans);
+    color: var(--sm-ink);
     background:
         radial-gradient(circle at 85% 8%, rgba(107, 39, 55, 0.06), transparent 40%),
-        var(--cream);
-    min-height: 100vh;
+        var(--sm-cream);
+    min-height: 70vh;
     overflow-x: hidden;
+    letter-spacing: normal;   /* style.css adds letter-spacing on body */
 }
 
-button { font-family: inherit; cursor: pointer; }
-a { color: inherit; text-decoration: none; }
+.sm-page *, .sm-page *::before, .sm-page *::after { box-sizing: border-box; margin: 0; padding: 0; }
+.sm-page button { font-family: inherit; cursor: pointer; }
+.sm-page a { color: inherit; text-decoration: none; }
 
-/* ---------- NAVBAR ---------- */
-.navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 6vw;
-    background: rgba(251, 247, 241, 0.85);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--line);
-    position: sticky;
-    top: 0;
-    z-index: 20;
-}
-
-.logo {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 600;
-    font-size: 2.1rem;
-    letter-spacing: -0.5px;
-}
-
-.nav-links { display: flex; gap: 2.6rem; }
-
-.nav-links a {
-    font-size: 0.98rem;
-    padding: 6px 0;
-    border-bottom: 2px solid transparent;
-    transition: color 0.2s, border-color 0.2s;
-}
-.nav-links a:hover { color: var(--wine); }
-.nav-links a.active { color: var(--wine); border-color: var(--wine); }
-
-.nav-actions { display: flex; align-items: center; gap: 1.4rem; }
-
-.icon-btn { position: relative; background: none; border: none; color: var(--ink); display: grid; place-items: center; }
-
-.badge {
-    position: absolute;
-    top: -7px; right: -9px;
-    min-width: 18px; height: 18px;
-    padding: 0 5px;
-    border-radius: 999px;
-    background: var(--wine);
-    color: #fff;
-    font-size: 0.68rem;
-    font-weight: 500;
-    display: grid; place-items: center;
-}
-.badge[hidden] { display: none; }
-
-.avatar {
-    width: 46px; height: 46px;
-    border-radius: 50%;
-    background: #4a3a36;
-    color: #f6efe6;
-    display: grid; place-items: center;
-}
-
-/* ---------- MATCHER LAYOUT ---------- */
-.matcher {
+.sm-page .sm-matcher {
     display: grid;
     grid-template-columns: clamp(300px, 31vw, 460px) 1fr;
     gap: 2.5rem;
@@ -102,101 +48,110 @@ a { color: inherit; text-decoration: none; }
     align-items: center;
 }
 
-/* ---------- COLLAGE ---------- */
-.collage {
+.sm-page .collage {
     position: relative;
     height: 620px;
 }
 
-.polaroid {
+.sm-page .sm-polaroid {
     position: absolute;
     background: #fff;
     padding: 12px;
     box-shadow: 0 18px 40px rgba(60, 30, 25, 0.18);
 }
 
-.polaroid-main {
+.sm-page .sm-polaroid-main {
     width: 78%;
     height: 78%;
-    top: 0; left: 6%;
+    top: 0;
+    left: 6%;
     transform: rotate(-3deg);
 }
 
-.polaroid-small {
+.sm-page .sm-polaroid-small {
     width: 52%;
     height: 38%;
-    bottom: 4%; right: 0;
+    bottom: 4%;
+    right: 0;
     transform: rotate(2deg);
 }
 
-.photo {
-    width: 100%; height: 100%;
+.sm-page .photo {
+    width: 100%;
+    height: 100%;
     background-size: cover;
     background-position: center;
 }
 
-/* Drop your photos in /images with these names.
-   If they're missing, the gradients below show instead. */
-.photo-wardrobe {
+.sm-page .photo-wardrobe {
     background-image:
         url("../images/hero-wardrobe.jpg"),
         linear-gradient(160deg, #e9dccb 0%, #c9a88f 45%, #6b2737 100%);
 }
-.photo-coffee {
+
+.sm-page .photo-coffee {
     background-image:
         url("../images/hero-coffee.png"),
         linear-gradient(140deg, #f3ebe0 0%, #d9c3a5 60%, #8a5a44 100%);
 }
 
-.tape {
+.sm-page .tape {
     position: absolute;
-    top: -14px; right: -26px;
-    width: 120px; height: 30px;
+    top: -14px;
+    right: -26px;
+    width: 120px;
+    height: 30px;
     background: #6b4a3f;
     transform: rotate(-8deg);
     opacity: 0.9;
 }
 
-.script-note {
+.sm-page .script-note {
     position: absolute;
-    left: 2%; bottom: 2%;
-    font-family: var(--script);
+    left: 2%;
+    bottom: 2%;
+    font-family: var(--sm-script);
     font-size: 2.6rem;
     line-height: 1;
-    color: var(--ink);
+    color: var(--sm-ink);
     transform: rotate(-9deg);
 }
 
-/* ---------- CONTENT ---------- */
-.eyebrow {
+.sm-page .sm-eyebrow {
     font-size: 0.85rem;
     letter-spacing: 0.4em;
-    color: var(--wine);
+    color: var(--sm-wine);
     margin-bottom: 1.2rem;
 }
-.eyebrow.center { text-align: center; }
 
-h1 {
-    font-family: var(--serif);
+.sm-page .sm-eyebrow.center {
+    text-align: center;
+}
+
+.sm-page h1 {
+    font-family: var(--sm-serif);
     font-weight: 600;
     font-size: clamp(2.8rem, 5.4vw, 5rem);
     line-height: 1.02;
     letter-spacing: -1px;
     margin-bottom: 1.6rem;
 }
-h1 em { color: var(--wine); font-weight: 500; }
 
-.lead {
+.sm-page h1 em {
+    color: var(--sm-wine);
+    font-weight: 500;
+}
+
+.sm-page .sm-lead {
     max-width: 560px;
     font-size: 1.08rem;
     line-height: 1.7;
     font-weight: 300;
-    color: var(--ink-soft);
+    color: var(--sm-ink-soft);
     margin-bottom: 2.6rem;
 }
 
-/* ---------- OPTION ROWS ---------- */
-.option-row {
+.sm-page .option-row {
     display: grid;
     grid-template-columns: 225px 1fr;
     align-items: center;
@@ -204,94 +159,132 @@ h1 em { color: var(--wine); font-weight: 500; }
     padding: 14px 20px;
     margin-bottom: 14px;
     background: rgba(251, 247, 241, 0.7);
-    border: 1px solid var(--line);
+    border: 1px solid var(--sm-line);
     border-radius: 18px;
 }
 
-.option-label {
+.sm-page .option-label {
     display: flex;
     align-items: center;
     gap: 0.9rem;
     padding-right: 0.8rem;
-    border-right: 1px solid var(--line);
-    color: var(--wine);
+    border-right: 1px solid var(--sm-line);
+    color: var(--sm-wine);
 }
-.option-label h3 {
-    font-family: var(--serif);
+
+.sm-page .option-label h3 {
+    font-family: var(--sm-serif);
     font-size: 1.45rem;
     font-weight: 700;
-    color: var(--ink);
+    color: var(--sm-ink);
     line-height: 1.1;
 }
-.option-label p {
+
+.sm-page .option-label p {
     font-size: 0.88rem;
-    color: var(--ink-soft);
+    color: var(--sm-ink-soft);
     font-weight: 300;
     margin-top: 3px;
 }
 
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.sm-page .sm-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
 
-.chip {
+.sm-page .sm-chip {
     padding: 9px 18px;
     font-size: 0.92rem;
     white-space: nowrap;
-    color: var(--ink);
+    color: var(--sm-ink);
     background: transparent;
     border: 1px solid rgba(43, 29, 26, 0.2);
     border-radius: 999px;
     transition: all 0.2s ease;
 }
-.chip:hover { border-color: var(--wine); color: var(--wine); transform: translateY(-1px); }
-.chip.active {
-    background: var(--wine);
-    border-color: var(--wine);
+
+.sm-page .sm-chip:hover {
+    border-color: var(--sm-wine);
+    color: var(--sm-wine);
+    transform: translateY(-1px);
+}
+
+.sm-page .sm-chip.active {
+    background: var(--sm-wine);
+    border-color: var(--sm-wine);
     color: #fff;
     box-shadow: 0 6px 16px rgba(107, 39, 55, 0.28);
 }
 
-/* ---------- CTA ---------- */
-.cta-wrap { display: flex; justify-content: center; margin-top: 1.8rem; }
+/* The Style row has six chips (the other rows have four or five), so its chips are a touch tighter
+   to keep the whole row on one line at normal desktop widths. */
+.sm-page .option-row[data-target="style"] .sm-chips { gap: 6px; }
+.sm-page .option-row[data-target="style"] .sm-chip { padding: 9px 13px; }
 
-.cta {
+.sm-page .cta-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.8rem;
+}
+
+.sm-page .cta {
     display: inline-flex;
     align-items: center;
     gap: 12px;
     padding: 15px 46px;
-    font-family: var(--serif);
+    font-family: var(--sm-serif);
     font-size: 1.4rem;
     font-weight: 600;
     letter-spacing: 0.3px;
     color: #fff;
-    background: linear-gradient(180deg, var(--wine), var(--wine-dark));
+    background: linear-gradient(180deg, var(--sm-wine), var(--sm-wine-dark));
     border: none;
     border-radius: 999px;
     box-shadow: 0 10px 22px rgba(107, 39, 55, 0.3);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.cta:hover { transform: translateY(-2px); box-shadow: 0 16px 28px rgba(107, 39, 55, 0.36); }
-.cta:active { transform: translateY(0); }
-.cta .arrow { transition: transform 0.2s; }
-.cta:hover .arrow { transform: translateX(5px); }
 
-/* ---------- RESULTS ---------- */
-.results {
-    padding: 4rem 6vw 6rem;
-    background: var(--paper);
-    border-top: 1px solid var(--line);
-    text-align: center;
-    animation: fadeUp 0.6s ease both;
+.sm-page .cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 28px rgba(107, 39, 55, 0.36);
 }
-.results[hidden] { display: none; }
 
-.results h2 {
-    font-family: var(--serif);
+.sm-page .cta:active {
+    transform: translateY(0);
+}
+
+.sm-page .cta .arrow {
+    transition: transform 0.2s;
+}
+
+.sm-page .cta:hover .arrow {
+    transform: translateX(5px);
+}
+
+.sm-page .results {
+    padding: 4rem 6vw 6rem;
+    background: var(--sm-paper);
+    border-top: 1px solid var(--sm-line);
+    text-align: center;
+    animation: sm-fadeUp 0.6s ease both;
+}
+
+/* keep the "Your matches" heading clear of the sticky site header after scrolling */
+.sm-page .results { scroll-margin-top: 90px; }
+
+.sm-page .results[hidden] {
+    display: none;
+}
+
+.sm-page .results h2 {
+    font-family: var(--sm-serif);
     font-size: 2.8rem;
     font-weight: 600;
     margin-bottom: 3rem;
 }
 
-.cards {
+.sm-page .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
@@ -299,78 +292,116 @@ h1 em { color: var(--wine); font-weight: 500; }
     margin: 0 auto;
 }
 
-.look-card {
+.sm-page .look-card {
     background: #fff;
-    border: 1px solid var(--line);
+    border: 1px solid var(--sm-line);
     padding: 2rem 1.6rem 2.2rem;
     box-shadow: 0 14px 34px rgba(60, 30, 25, 0.08);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
-    animation: fadeUp 0.6s ease both;
+    animation: sm-fadeUp 0.6s ease both;
 }
-.look-card:hover { transform: translateY(-6px); box-shadow: 0 22px 44px rgba(60, 30, 25, 0.14); }
 
-.look-number {
-    font-family: var(--serif);
+.sm-page .look-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 44px rgba(60, 30, 25, 0.14);
+}
+
+.sm-page .look-number {
+    font-family: var(--sm-serif);
     font-size: 1rem;
     letter-spacing: 0.2em;
-    color: var(--wine);
+    color: var(--sm-wine);
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 1.4rem;
 }
-.look-number::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 
-.look-image {
+.sm-page .look-number::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--sm-line);
+}
+
+.sm-page .look-image {
     height: 220px;
     margin-bottom: 1.4rem;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    /* 6 columns so 2, 3, 4 and 5 tiles can all fill the box evenly (see the tile rules below) */
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 1fr;
     gap: 6px;
 }
 
-.look-tile {
-    background-size: cover;
-    background-position: center;
-    border: 1px solid var(--line);
+/* 4 or 5 tiles need two rows, so give the box a little more height (browsers without :has() keep 220px) */
+.sm-page .look-image:has(> .look-tile:nth-child(4)) {
+    height: 300px;
 }
 
-.look-title {
+.sm-page .look-tile {
+    grid-column: span 2;      /* default: 3 tiles in one row (2 + 2 + 2) */
+    min-width: 0;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid var(--sm-line);
+}
+
+/* 2 tiles: one row, half each */
+.sm-page .look-tile:first-child:nth-last-child(2),
+.sm-page .look-tile:first-child:nth-last-child(2) ~ .look-tile {
+    grid-column: span 3;
+}
+
+/* 4 tiles: 2 x 2 */
+.sm-page .look-tile:first-child:nth-last-child(4),
+.sm-page .look-tile:first-child:nth-last-child(4) ~ .look-tile {
+    grid-column: span 3;
+}
+
+/* 5 tiles: three on the first row, two wider ones on the second */
+.sm-page .look-tile:nth-child(4):nth-last-child(2),
+.sm-page .look-tile:nth-child(5):nth-last-child(1) {
+    grid-column: span 3;
+}
+
+.sm-page .look-title {
     font-size: 0.78rem;
     letter-spacing: 0.3em;
-    color: var(--wine);
+    color: var(--sm-wine);
     margin-bottom: 0.7rem;
 }
 
-.look-items {
-    font-family: var(--serif);
+.sm-page .look-items {
+    font-family: var(--sm-serif);
     font-size: 1.35rem;
     line-height: 1.5;
     margin-bottom: 0.9rem;
 }
 
-.look-tags {
+.sm-page .look-tags {
     font-size: 0.78rem;
     letter-spacing: 0.18em;
-    color: var(--ink-soft);
+    color: var(--sm-ink-soft);
     margin-bottom: 1.4rem;
 }
 
-.match-score {
-    font-family: var(--serif);
+.sm-page .match-score {
+    font-family: var(--sm-serif);
     font-size: 3.2rem;
     font-weight: 600;
-    color: var(--wine);
+    color: var(--sm-wine);
     line-height: 1;
 }
-.match-label {
+
+.sm-page .match-label {
     font-size: 0.72rem;
     letter-spacing: 0.3em;
-    color: var(--ink-soft);
+    color: var(--sm-ink-soft);
     margin-bottom: 1.6rem;
 }
 
-.card-btn {
+.sm-page .card-btn {
     display: block;
     width: 100%;
     padding: 13px;
@@ -379,45 +410,60 @@ h1 em { color: var(--wine); font-weight: 500; }
     border-radius: 999px;
     transition: all 0.2s;
 }
-.card-btn.primary { background: var(--wine); color: #fff; border: 1px solid var(--wine); margin-bottom: 10px; }
-.card-btn.primary:hover { background: var(--wine-dark); }
-.card-btn.ghost { background: transparent; color: var(--wine); border: 1px solid var(--wine); }
-.card-btn.ghost:hover { background: rgba(107, 39, 55, 0.07); }
-.card-btn.saved { background: var(--wine); color: #fff; }
 
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
+.sm-page .card-btn.primary {
+    background: var(--sm-wine);
+    color: #fff;
+    border: 1px solid var(--sm-wine);
+    margin-bottom: 10px;
 }
 
-/* ============================================
-   MY LOOKS PAGE
-   ============================================ */
+.sm-page .card-btn.primary:hover {
+    background: var(--sm-wine-dark);
+}
 
-.looks-header {
+.sm-page .card-btn.ghost {
+    background: transparent;
+    color: var(--sm-wine);
+    border: 1px solid var(--sm-wine);
+}
+
+.sm-page .card-btn.ghost:hover {
+    background: rgba(107, 39, 55, 0.07);
+}
+
+.sm-page .card-btn.saved {
+    background: var(--sm-wine);
+    color: #fff;
+}
+
+@keyframes sm-fadeUp { from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); } }
+.sm-page .looks-header {
     text-align: center;
     padding: 4rem 6vw 2rem;
 }
-.looks-header h1 { margin-bottom: 1rem; }
 
-.lead.center {
+.sm-page .looks-header h1 {
+    margin-bottom: 1rem;
+}
+
+.sm-page .sm-lead.center {
     margin: 0 auto 2rem;
     text-align: center;
 }
 
-.filter-chips {
+.sm-page .sm-filter-chips {
     justify-content: center;
     margin-top: 0.5rem;
 }
 
-.looks-grid-section {
+.sm-page .looks-grid-section {
     padding: 2rem 6vw 6rem;
     text-align: center;
 }
 
-/* Each saved look takes exactly 1/3 of the row (2 on tablets, 1 on phones),
-   no matter how many looks are saved. Fewer looks stay centered. */
-.cards.saved-cards {
+.sm-page .cards.saved-cards {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -425,33 +471,37 @@ h1 em { color: var(--wine); font-weight: 500; }
     max-width: 1200px;
     margin: 0 auto;
 }
-.saved-cards .look-card {
+
+.sm-page .saved-cards .look-card {
     flex: 0 0 calc((100% - 4rem) / 3);
     min-width: 0;
 }
 
-.look-date {
+.sm-page .look-date {
     font-size: 0.74rem;
     letter-spacing: 0.18em;
-    color: var(--ink-soft);
+    color: var(--sm-ink-soft);
     margin: -0.6rem 0 1.2rem;
 }
 
-.card-btn.remove {
+.sm-page .card-btn.remove {
     background: transparent;
-    color: var(--ink-soft);
+    color: var(--sm-ink-soft);
     border: 1px solid rgba(43, 29, 26, 0.2);
 }
-.card-btn.remove:hover { color: var(--wine); border-color: var(--wine); }
 
-.look-card.removing {
+.sm-page .card-btn.remove:hover {
+    color: var(--sm-wine);
+    border-color: var(--sm-wine);
+}
+
+.sm-page .look-card.removing {
     opacity: 0;
     transform: scale(0.95);
     transition: all 0.3s ease;
 }
 
-/* empty state */
-.empty-state {
+.sm-page .empty-state {
     max-width: 520px;
     margin: 1rem auto 0;
     padding: 3.5rem 2rem;
@@ -460,139 +510,178 @@ h1 em { color: var(--wine); font-weight: 500; }
     border: 1px dashed rgba(107, 39, 55, 0.3);
     border-radius: 24px;
 }
-.empty-state[hidden] { display: none; }
 
-.empty-icon {
-    width: 72px; height: 72px;
+.sm-page .empty-state[hidden] {
+    display: none;
+}
+
+.sm-page .empty-icon {
+    width: 72px;
+    height: 72px;
     margin: 0 auto 1.2rem;
     border-radius: 50%;
     background: rgba(107, 39, 55, 0.08);
-    color: var(--wine);
-    display: grid; place-items: center;
+    color: var(--sm-wine);
+    display: grid;
+    place-items: center;
 }
 
-.script-heading {
-    font-family: var(--script);
+.sm-page .script-heading {
+    font-family: var(--sm-script);
     font-size: 3.2rem;
     line-height: 1.1;
-    color: var(--wine);
+    color: var(--sm-wine);
     margin-bottom: 0.8rem;
 }
-.empty-text {
+
+.sm-page .empty-text {
     max-width: 380px;
     margin: 0 auto 2rem;
     line-height: 1.7;
     font-weight: 300;
-    color: var(--ink-soft);
+    color: var(--sm-ink-soft);
 }
 
-.cta-link { text-decoration: none; }
+.sm-page .cta-link {
+    text-decoration: none;
+}
 
-.clear-wrap { text-align: center; margin-top: 3rem; }
-.clear-wrap[hidden] { display: none; }
+.sm-page .clear-wrap {
+    text-align: center;
+    margin-top: 3rem;
+}
 
-.text-btn {
+.sm-page .clear-wrap[hidden] {
+    display: none;
+}
+
+.sm-page .text-btn {
     background: none;
     border: none;
     font-size: 0.85rem;
     letter-spacing: 0.1em;
-    color: var(--ink-soft);
+    color: var(--sm-ink-soft);
     text-decoration: underline;
     text-underline-offset: 4px;
 }
-.text-btn:hover { color: var(--wine); }
+
+.sm-page .text-btn:hover {
+    color: var(--sm-wine);
+}
 
 @media (max-width: 1000px) {
-    .saved-cards .look-card { flex-basis: calc((100% - 2rem) / 2); }
+    .sm-page .saved-cards .look-card {
+        flex-basis: calc((100% - 2rem) / 2);
+    }
+
 }
 @media (max-width: 640px) {
-    .saved-cards .look-card { flex-basis: 100%; }
-}
+    .sm-page .saved-cards .look-card {
+        flex-basis: 100%;
+    }
 
-/* ---------- LOADING + EMPTY RESULTS ---------- */
-.cta:disabled {
+}
+.sm-page .cta:disabled {
     opacity: 0.8;
     cursor: progress;
     transform: none;
     box-shadow: 0 10px 22px rgba(107, 39, 55, 0.2);
 }
 
-/* shimmering placeholder cards while "finding your looks" */
-.look-card.skeleton { pointer-events: none; }
-.look-card.skeleton:hover { transform: none; box-shadow: 0 14px 34px rgba(60, 30, 25, 0.08); }
+.sm-page .look-card.skeleton {
+    pointer-events: none;
+}
 
-.sk {
+.sm-page .look-card.skeleton:hover {
+    transform: none;
+    box-shadow: 0 14px 34px rgba(60, 30, 25, 0.08);
+}
+
+.sm-page .sk {
     background: linear-gradient(90deg, #efe7dc 25%, #f9f4ec 50%, #efe7dc 75%);
     background-size: 200% 100%;
-    animation: shimmer 1.2s linear infinite;
+    animation: sm-shimmer 1.2s linear infinite;
     border-radius: 4px;
 }
-.sk-line { height: 14px; margin: 0 auto 14px; }
-.sk-line.short { width: 35%; }
-.sk-line.mid { width: 70%; }
-.sk-tiles { height: 220px; margin-bottom: 1.6rem; }
-.sk-score { height: 48px; width: 90px; margin: 1.2rem auto 1.6rem; }
-.sk-btn { height: 44px; border-radius: 999px; margin-bottom: 10px; }
 
-@keyframes shimmer { to { background-position: -200% 0; } }
-
-/* empty state inside the results grid */
-.cards .empty-state { grid-column: 1 / -1; justify-self: center; width: 100%; }
-.empty-actions { display: flex; flex-direction: column; align-items: center; gap: 1.1rem; }
-
-/* ---------- RESPONSIVE ---------- */
-@media (max-width: 1100px) {
-    .matcher { grid-template-columns: 1fr; }
-    .collage { display: none; }
-    .nav-links { gap: 1.4rem; }
+.sm-page .sk-line {
+    height: 14px;
+    margin: 0 auto 14px;
 }
 
-/* hamburger button (only visible on phones) */
-.menu-btn {
-    display: none;
-    width: 44px; height: 44px;
-    background: none;
-    border: none;
+.sm-page .sk-line.short {
+    width: 35%;
+}
+
+.sm-page .sk-line.mid {
+    width: 70%;
+}
+
+.sm-page .sk-tiles {
+    height: 220px;
+    margin-bottom: 1.6rem;
+}
+
+.sm-page .sk-score {
+    height: 48px;
+    width: 90px;
+    margin: 1.2rem auto 1.6rem;
+}
+
+.sm-page .sk-btn {
+    height: 44px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+}
+
+@keyframes sm-shimmer { to { background-position: -200% 0; } }
+.sm-page .cards .empty-state {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: 100%;
+}
+
+.sm-page .empty-actions {
+    display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 1.1rem;
 }
-.menu-btn span {
-    width: 22px; height: 2px;
-    background: var(--ink);
-    transition: transform 0.25s ease, opacity 0.25s ease;
+
+@media (max-width: 1320px) {
+    .sm-page .sm-matcher {
+        grid-template-columns: clamp(250px, 26vw, 460px) 1fr;
+    }
+
 }
-.navbar.open .menu-btn span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.navbar.open .menu-btn span:nth-child(2) { opacity: 0; }
-.navbar.open .menu-btn span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+@media (max-width: 1100px) {
+    .sm-page .sm-matcher {
+        grid-template-columns: 1fr;
+    }
 
-@media (max-width: 760px) {
-    .menu-btn { display: flex; }
-    .nav-actions { gap: 0.8rem; }
-
-    /* nav links become a dropdown under the navbar */
-    .nav-links {
+    .sm-page .collage {
         display: none;
-        position: absolute;
-        top: 100%; left: 0; right: 0;
-        flex-direction: column;
-        gap: 0;
-        padding: 0.4rem 6vw 1rem;
-        background: rgba(251, 247, 241, 0.98);
-        border-bottom: 1px solid var(--line);
-        box-shadow: 0 14px 24px rgba(60, 30, 25, 0.08);
     }
-    .navbar.open .nav-links { display: flex; }
-    .nav-links a {
-        padding: 14px 0;
-        font-size: 1.05rem;
-        border-bottom: 1px solid var(--line);
-    }
-    .nav-links a.active { border-bottom-color: var(--wine); }
 
-    .script-heading { font-size: 2.4rem; }
-    .option-row { grid-template-columns: 1fr; }
-    .option-label { border-right: none; border-bottom: 1px solid var(--line); padding: 0 0 12px; }
-    .cta { padding: 16px 40px; font-size: 1.35rem; }
+}
+@media (max-width: 760px) {
+    .sm-page .script-heading {
+        font-size: 2.4rem;
+    }
+
+    .sm-page .option-row {
+        grid-template-columns: 1fr;
+    }
+
+    .sm-page .option-label {
+        border-right: none;
+        border-bottom: 1px solid var(--sm-line);
+        padding: 0 0 12px;
+    }
+
+    .sm-page .cta {
+        padding: 16px 40px;
+        font-size: 1.35rem;
+    }
+
 }

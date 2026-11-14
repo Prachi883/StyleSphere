@@ -1,10 +1,13 @@
 // ============================================
 // StyleSphere · My Looks page
-// Needs: recommendation-engine.js (COLOR_HEX), saved-looks.js
+// Needs: recommendation-engine.js (COLOR_HEX), stylesphere-adapter.js, saved-looks.js
+// Wrapped in a function so its names never collide with app.js (which also has "activeFilter").
 // ============================================
 
+(function () {
+
 const savedCards = document.getElementById("savedCards");
-const filterChips = document.getElementById("filterChips");
+const filterChips = document.getElementById("looksFilterChips");
 const emptyState = document.getElementById("emptyState");
 const clearWrap = document.getElementById("clearWrap");
 const looksSubtitle = document.getElementById("looksSubtitle");
@@ -26,7 +29,7 @@ function renderFilters(looks) {
     ["all", ...occasions].forEach(function (value) {
         const chip = document.createElement("button");
         chip.type = "button";
-        chip.className = "chip" + (value === activeFilter ? " active" : "");
+        chip.className = "sm-chip" + (value === activeFilter ? " active" : "");
         chip.textContent = value === "all" ? "All" : value.charAt(0).toUpperCase() + value.slice(1);
         chip.addEventListener("click", function () {
             activeFilter = value;
@@ -67,9 +70,7 @@ function render() {
         card.style.animationDelay = (index * 0.08) + "s";
 
         const tiles = look.items.map(function (item) {
-            const swatch = COLOR_HEX[item.color] || "#e5d8c8";
-            return `<div class="look-tile" title="${item.name}"
-                         style="background-color:${swatch}; background-image:url('${item.image}')"></div>`;
+            return `<div class="look-tile" title="${ssEscape(item.name)}" style="${ssTileStyle(item)}"></div>`;
         }).join("");
 
         const f = look.filters || {};
@@ -78,9 +79,9 @@ function render() {
         card.innerHTML = `
             <div class="look-number">0${index + 1}</div>
             <div class="look-image">${tiles}</div>
-            <p class="look-title">${look.name.toUpperCase()}</p>
-            <p class="look-items">${look.items.map(i => i.name).join("<br>")}</p>
-            <p class="look-tags">${tags}</p>
+            <p class="look-title">${ssEscape(look.name.toUpperCase())}</p>
+            <p class="look-items">${look.items.map(i => ssEscape(i.name)).join("<br>")}</p>
+            <p class="look-tags">${ssEscape(tags)}</p>
             <div class="match-score">${look.score}%</div>
             <p class="match-label">MATCH SCORE</p>
             <p class="look-date">SAVED ${formatDate(look.savedAt).toUpperCase()}</p>
@@ -89,7 +90,7 @@ function render() {
         `;
 
         card.querySelector('[data-action="try"]').addEventListener("click", function () {
-            localStorage.setItem("currentLook", JSON.stringify(look));
+            setCurrentLook(look, look.filters);
             console.log("Try this look:", look);
             // Later: window.location.href = "style-studio.html";
         });
@@ -115,3 +116,5 @@ clearAllBtn.addEventListener("click", function () {
 });
 
 render();
+
+})();

@@ -36,7 +36,7 @@ function renderClothes() {
     (activeFilter === "All" || item.category.toLowerCase() === activeFilter.toLowerCase()) &&
     (
         item.name.toLowerCase().includes(search) ||
-        item.color.toLowerCase().includes(search) ||
+        (item.color || "").toLowerCase().includes(search) ||
         item.category.toLowerCase().includes(search)
     )
 );
@@ -141,6 +141,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelector(".menu-toggle")?.addEventListener("click", () => document.querySelector(".nav-links")?.classList.toggle("open"));
   // Wardrobe search and category filters
   loadClothes();
+  // Success message after insert_clothing.php redirects back with ?added=1
+  if (new URLSearchParams(location.search).get("added") === "1") {
+    showToast("Clothing added to your wardrobe!");
+    history.replaceState(null, "", location.pathname);
+  }
   document.getElementById("searchInput")?.addEventListener("input", renderClothes);
   document.getElementById("filterChips")?.addEventListener("click", event => {
     const button = event.target.closest("[data-filter]");

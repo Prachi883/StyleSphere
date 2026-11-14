@@ -5,7 +5,7 @@
 <main class="page-wrap">
   <div class="page-heading"><div><p class="eyebrow">YOUR PERSONAL COLLECTION</p><h1>My <em>wardrobe.</em></h1><p class="lead small-lead">Every piece has a place. Make the most of what you own.</p></div><button class="btn btn-dark" id="openAddForm">＋ Add clothing</button></div>
   <section class="wardrobe-stats"><div><strong id="itemCount">6</strong><span>Pieces in wardrobe</span></div><div><strong id="categoryCount">00</strong><span>Categories</span></div><div><strong>∞</strong><span>Ways to style</span></div></section>
-  <section class="toolbar"><input id="searchInput" class="search-box" type="search" placeholder="⌕  Search your clothes..."><div class="filter-chips" id="filterChips"><button class="chip selected" data-filter="All">All pieces</button><button class="chip" data-filter="Tops">Tops</button><button class="chip" data-filter="Bottoms">Bottoms</button><button class="chip" data-filter="Dresses">Dresses</button><button class="chip" data-filter="Outerwear">Outerwear</button><button class="chip" data-filter="Footwear">Footwear</button></div></section>
+  <section class="toolbar"><input id="searchInput" class="search-box" type="search" placeholder="⌕  Search your clothes..."><div class="filter-chips" id="filterChips"><button class="chip selected" data-filter="All">All pieces</button><button class="chip" data-filter="Tops">Tops</button><button class="chip" data-filter="Bottoms">Bottoms</button><button class="chip" data-filter="Dresses">Dresses</button><button class="chip" data-filter="Outerwear">Outerwear</button><button class="chip" data-filter="Footwear">Footwear</button><button class="chip" data-filter="Accessories">Accessories</button></div></section>
   <section id="clothingGrid" class="clothing-grid"></section>
   <p id="emptyMessage" class="empty-message" hidden>No clothing found. Try another search or add a new piece.</p>
 </main>
@@ -44,10 +44,24 @@
 
         <label>
             Colour
-            <input
-                type="text"
-                name="color"
-                placeholder="e.g. Pink">
+            <select name="color" required>
+                <option value="">Choose colour</option>
+                <option value="White">White</option>
+                <option value="Black">Black</option>
+                <option value="Grey">Grey</option>
+                <option value="Beige">Beige</option>
+                <option value="Cream">Cream</option>
+                <option value="Blue">Blue</option>
+                <option value="Brown">Brown</option>
+                <option value="Olive">Olive</option>
+                <option value="Pink">Pink</option>
+                <option value="Burgundy">Burgundy</option>
+                <option value="Red">Red</option>
+                <option value="Green">Green</option>
+                <option value="Yellow">Yellow</option>
+                <option value="Purple">Purple</option>
+                <option value="Orange">Orange</option>
+            </select>
         </label>
 
     </div>
@@ -77,6 +91,20 @@
         </label>
 
     </div>
+
+        <!-- Style (used by the Style Matcher) -->
+    <label>
+        Style
+        <select name="style" required>
+            <option value="">Choose style</option>
+            <option value="casual">Casual</option>
+            <option value="chic">Chic</option>
+            <option value="streetwear">Streetwear</option>
+            <option value="formal">Formal</option>
+            <option value="minimal">Minimal</option>
+            <option value="festive">Festive</option>
+        </select>
+    </label>
 
     <!-- Clothing Image -->
     <label>

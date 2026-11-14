@@ -1,7 +1,10 @@
-
 <?php
 
+// db.php can print a stray blank line. Buffer the output and clean it,
+// so the redirect below can still send its header.
+ob_start();
 require_once "db.php";
+ob_clean();
 
 // Accept POST requests only
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -15,10 +18,43 @@ $category = trim($_POST["category"] ?? "");
 $color = trim($_POST["color"] ?? "");
 $season = trim($_POST["season"] ?? "");
 $occasion = trim($_POST["occasion"] ?? "");
+$style = trim($_POST["style"] ?? "");
 
 if ($name === "" || $category === "") {
     exit("Name and category are required.");
 }
+
+// The Style Matcher relies on exact values, so only accept the ones the form offers
+$allowedCategories = ["Tops", "Bottoms", "Dresses", "Outerwear", "Footwear", "Accessories"];
+$allowedSeasons    = ["All season", "Summer", "Winter", "Monsoon"];
+$allowedOccasions  = ["Everyday", "College", "Party", "Formal", "Festive"];
+$allowedStyles     = ["casual", "chic", "streetwear", "formal", "minimal", "festive"];
+// Colours match COLOR_HEX in js/recommendation-engine.js (keep the two lists in sync)
+$allowedColors     = ["White", "Black", "Grey", "Beige", "Cream", "Blue", "Brown", "Olive",
+                      "Pink", "Burgundy", "Red", "Green", "Yellow", "Purple", "Orange"];
+
+if (!in_array($category, $allowedCategories, true)) {
+    exit("Invalid category.");
+}
+
+if ($season === "")   { $season = "All season"; }
+if ($occasion === "") { $occasion = "Everyday"; }
+
+if (!in_array($season, $allowedSeasons, true)) {
+    exit("Invalid season.");
+}
+if (!in_array($occasion, $allowedOccasions, true)) {
+    exit("Invalid occasion.");
+}
+if (!in_array($color, $allowedColors, true)) {
+    exit("Please choose a colour.");
+}
+if (!in_array($style, $allowedStyles, true)) {
+    exit("Please choose a style.");
+}
+
+// Keep free-text fields to a sensible length
+$name = mb_substr($name, 0, 100);
 
 // Image path is optional
 $imagePath = null;
@@ -82,20 +118,21 @@ if (isset($_FILES["image"]) &&
 
 // Insert clothing information into MySQL
 $sql = "INSERT INTO clothing
-        (name, category, color, season, occasion, image_path)
-        VALUES (?, ?, ?, ?, ?, ?)";
+        (name, category, color, season, occasion, style, image_path)
+        VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 try {
 
     $stmt = $conn->prepare($sql);
 
     $stmt->bind_param(
-        "ssssss",
+        "sssssss",
         $name,
         $category,
         $color,
         $season,
         $occasion,
+        $style,
         $imagePath
     );
 

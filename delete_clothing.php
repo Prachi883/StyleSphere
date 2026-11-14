@@ -1,7 +1,10 @@
-
 <?php
 
+// db.php can print a stray blank line. Buffer the output and clean it,
+// so the JSON response stays valid.
+ob_start();
 require_once "db.php";
+ob_clean();
 
 header("Content-Type: application/json; charset=utf-8");
 
@@ -21,11 +24,28 @@ if (!$id || $id < 1) {
     exit;
 }
 
+// Find the photo first, so it can be removed together with the record
+$imagePath = null;
+$find = $conn->prepare("SELECT image_path FROM clothing WHERE id = ?");
+$find->bind_param("i", $id);
+$find->execute();
+$find->bind_result($imagePath);
+$find->fetch();
+$find->close();
+
 // Delete clothing using prepared statement
 $stmt = $conn->prepare("DELETE FROM clothing WHERE id = ?");
 $stmt->bind_param("i", $id);
 
 if ($stmt->execute() && $stmt->affected_rows > 0) {
+
+    // Remove the uploaded photo (only ever inside the uploads folder)
+    if ($imagePath) {
+        $file = __DIR__ . "/uploads/" . basename($imagePath);
+        if (is_file($file)) {
+            @unlink($file);
+        }
+    }
 
     echo json_encode([
         "success" => true,

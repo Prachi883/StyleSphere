@@ -1,10 +1,15 @@
 // ============================================
 // StyleSphere · Style Matcher (page logic)
 // Needs, loaded before this file:
-//   js/clothes-data.js           → const clothes
 //   js/recommendation-engine.js  → generateOutfits(), COLOR_HEX
-//   js/saved-looks.js            → isLookSaved(), toggleSaveLook()
+//   js/stylesphere-adapter.js    → adaptClothes(), ssEscape(), ssTileStyle()
+//   js/saved-looks.js            → isLookSaved(), toggleSaveLook(), setCurrentLook()
+//
+// Everything is wrapped in a function so the names here (loadClothes, etc.)
+// can never collide with the ones in app.js.
 // ============================================
+
+(function () {
 
 const findOutfitBtn = document.getElementById("findOutfitBtn");
 const resultsSection = document.getElementById("results");
@@ -18,9 +23,9 @@ const FIND_BTN_HTML = findOutfitBtn.innerHTML;   // remembered so we can restore
 document.querySelectorAll(".option-row").forEach(function (row) {
     const hiddenInput = document.getElementById(row.dataset.target);
 
-    row.querySelectorAll(".chip").forEach(function (chip) {
+    row.querySelectorAll(".sm-chip").forEach(function (chip) {
         chip.addEventListener("click", function () {
-            row.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+            row.querySelectorAll(".sm-chip").forEach(c => c.classList.remove("active"));
             chip.classList.add("active");
             hiddenInput.value = chip.dataset.value;
         });
@@ -28,15 +33,46 @@ document.querySelectorAll(".option-row").forEach(function (row) {
 });
 
 // ---------- 2. Get the clothes ----------
-// Right now: the temporary array from clothes-data.js.
-// Later, when Riyanshi's backend is ready, swap the body for:
-//   return fetch("get_clothes.php").then(response => response.json());
+// Real wardrobe from MySQL via fetch_clothing.php, converted by the adapter.
+// If the request fails we throw, and the click handler shows an error with a retry button
+// (we never show made-up items in place of the real wardrobe).
 async function loadClothes() {
-    return clothes;
+    const response = await fetch("fetch_clothing.php", { cache: "no-store" });
+    if (!response.ok) throw new Error("fetch_clothing.php answered HTTP " + response.status);
+
+    const rows = await response.json();
+    if (!Array.isArray(rows)) throw new Error("Unexpected response from fetch_clothing.php");
+
+    const items = adaptClothes(rows);
+    console.log("Wardrobe from database:", rows.length, "rows →", items.length, "usable items");
+    return items;
 }
 
 function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Can the wardrobe make at least one outfit?
+//   standard outfit: top + bottom + shoes
+//   dress outfit:    dress + shoes
+// Returns [] when at least one of these is possible, otherwise a list of what is still missing.
+function getMissingPieces(wardrobe) {
+    const has = function (cat) { return wardrobe.some(item => item.category === cat); };
+    const hasShoes = has("shoes");
+    const hasDress = has("dress");
+    const hasTop = has("top");
+    const hasBottom = has("bottom");
+
+    if (hasShoes && (hasDress || (hasTop && hasBottom))) return [];
+
+    const missing = [];
+    if (!hasShoes) missing.push("shoes");
+    if (!hasDress) {
+        if (hasTop && !hasBottom)      missing.push("a bottom (or a dress)");
+        else if (hasBottom && !hasTop) missing.push("a top (or a dress)");
+        else if (!hasTop && !hasBottom) missing.push("a dress, or a top + a bottom");
+    }
+    return missing;
 }
 
 // ---------- 3. Find My Outfit ----------
@@ -53,22 +89,36 @@ findOutfitBtn.addEventListener("click", async function () {
 
     showLoading();
 
-    // wait for the clothes AND at least 0.9s, so the loading state doesn't just flash
-    const results = await Promise.all([loadClothes(), wait(900)]);
-    const wardrobe = results[0];
+    try {
+        // wait for the clothes AND at least 0.9s, so the loading state doesn't just flash
+        const results = await Promise.all([loadClothes(), wait(900)]);
+        const wardrobe = results[0];
 
-    // does the wardrobe even have a top, a bottom and shoes?
-    const missing = ["top", "bottom", "shoes"].filter(function (cat) {
-        return !wardrobe.some(item => item.category === cat);
-    });
+        // can the wardrobe even make an outfit? (top + bottom + shoes, or dress + shoes)
+        const missing = getMissingPieces(wardrobe);
 
-    const recommendations = generateOutfits(wardrobe, filters, 3);
-    console.log("Recommendations:", recommendations);
+        const recommendations = generateOutfits(wardrobe, filters, 3);
+        console.log("Recommendations:", recommendations);
 
-    renderLooks(recommendations, filters, missing);
-
-    findOutfitBtn.disabled = false;
-    findOutfitBtn.innerHTML = FIND_BTN_HTML;
+        renderLooks(recommendations, filters, missing);
+    } catch (error) {
+        console.error("Style Matcher error:", error);
+        resultsTitle.textContent = "We couldn't load your wardrobe";
+        cardsContainer.innerHTML = `
+            <div class="empty-state">
+                <p class="empty-text">Something went wrong while fetching your clothes. Check that the server is running, then try again.</p>
+                <div class="empty-actions">
+                    <button type="button" class="cta" id="retryBtn">Try again</button>
+                </div>
+            </div>`;
+        document.getElementById("retryBtn").addEventListener("click", function () {
+            findOutfitBtn.click();
+        });
+    } finally {
+        // always give the button back, whatever happened
+        findOutfitBtn.disabled = false;
+        findOutfitBtn.innerHTML = FIND_BTN_HTML;
+    }
 });
 
 // ---------- 4. Loading state ----------
@@ -101,10 +151,10 @@ function renderEmpty(filters, missing) {
     let title, message, buttons;
 
     if (missing.length > 0) {
-        // wardrobe has no tops / bottoms / shoes at all
+        // wardrobe can't make any outfit yet
         title = "Your wardrobe needs a few more pieces";
-        message = "We need at least one top, one bottom and one pair of shoes to build an outfit. Missing: <strong>" + missing.join(", ") + "</strong>.";
-        buttons = `<a href="wardrobe.html" class="cta cta-link">Add to my wardrobe <span class="arrow">→</span></a>`;
+        message = "To build an outfit we need shoes, plus either a dress or a top and a bottom. Still missing: <strong>" + missing.join(" · ") + "</strong>.";
+        buttons = `<a href="wardrobe.php" class="cta cta-link">Add to my wardrobe <span class="arrow">→</span></a>`;
     } else {
         // wardrobe is fine, but nothing scores well for these choices
         title = "No strong matches yet";
@@ -112,7 +162,7 @@ function renderEmpty(filters, missing) {
                   "</strong>. Try different options, or add a few more pieces.";
         buttons = `
             <button type="button" class="cta" id="tryAgainBtn">Try different options</button>
-            <a href="wardrobe.html" class="text-btn">Add to my wardrobe</a>`;
+            <a href="wardrobe.php" class="text-btn">Add to my wardrobe</a>`;
     }
 
     resultsTitle.textContent = title;
@@ -150,16 +200,14 @@ function renderLooks(looks, filters, missing) {
 
         // one tile per clothing item: the photo if it exists, otherwise a color swatch
         const tiles = look.items.map(function (item) {
-            const swatch = COLOR_HEX[item.color] || "#e5d8c8";
-            return `<div class="look-tile" title="${item.name}"
-                         style="background-color:${swatch}; background-image:url('${item.image}')"></div>`;
+            return `<div class="look-tile" title="${ssEscape(item.name)}" style="${ssTileStyle(item)}"></div>`;
         }).join("");
 
         card.innerHTML = `
             <div class="look-number">0${index + 1}</div>
             <div class="look-image">${tiles}</div>
-            <p class="look-title">${look.name.toUpperCase()}</p>
-            <p class="look-items">${look.items.map(i => i.name).join("<br>")}</p>
+            <p class="look-title">${ssEscape(look.name.toUpperCase())}</p>
+            <p class="look-items">${look.items.map(i => ssEscape(i.name)).join("<br>")}</p>
             <p class="look-tags">${filters.occasion} · ${filters.weather} · ${filters.style}</p>
             <div class="match-score">${look.score}%</div>
             <p class="match-label">MATCH SCORE</p>
@@ -169,7 +217,7 @@ function renderLooks(looks, filters, missing) {
 
         // TRY THIS LOOK → remember it (with the filters) for Style Studio
         card.querySelector('[data-action="try"]').addEventListener("click", function () {
-            localStorage.setItem("currentLook", JSON.stringify({ ...look, filters: filters }));
+            setCurrentLook(look, filters);
             console.log("Try this look:", look);
             // When Style Studio exists, add:  window.location.href = "style-studio.html";
         });
@@ -192,3 +240,5 @@ function renderLooks(looks, filters, missing) {
         cardsContainer.appendChild(card);
     });
 }
+
+})();

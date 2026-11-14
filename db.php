@@ -3,7 +3,7 @@
 
 $host = "localhost";
 $username = "root";
-$password = "Mysql123456";
+$password = "";
 $database = "stylesphere";
 
 $conn = new mysqli($host, $username, $password, $database);
