@@ -219,7 +219,7 @@ function renderLooks(looks, filters, missing) {
         card.querySelector('[data-action="try"]').addEventListener("click", function () {
             setCurrentLook(look, filters);
             console.log("Try this look:", look);
-            // When Style Studio exists, add:  window.location.href = "style-studio.html";
+            window.location.href = "style-studio.php";
         });
 
         // SAVE LOOK → toggles: saves the look, click again to un-save.
